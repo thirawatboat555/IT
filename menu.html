@@ -18,9 +18,7 @@ padding-bottom:20px;
 /* HEADER */
 .header{
 position:fixed;
-top:0;
-left:0;
-right:0;
+top:0;left:0;right:0;
 background:linear-gradient(135deg,#43a047,#8bc34a);
 color:white;
 text-align:center;
@@ -35,7 +33,7 @@ position:fixed;
 top:8px;
 right:8px;
 background:white;
-width:220px;
+width:240px;
 max-height:75vh;
 overflow:auto;
 border-radius:14px;
@@ -52,24 +50,24 @@ margin-bottom:6px;
 }
 
 .cart-item{
-display:flex;
-align-items:center;
-justify-content:space-between;
-margin:6px 0;
-gap:4px;
+border-bottom:1px dashed #ccc;
+padding:6px 0;
 }
 
-.cart-item span{
-flex:1;
-white-space:nowrap;
-overflow:hidden;
-text-overflow:ellipsis;
+.cart-name{
+font-weight:bold;
+}
+
+.cart-detail{
+font-size:11px;
+color:#555;
 }
 
 .qty{
 display:flex;
-align-items:center;
+justify-content:flex-end;
 gap:4px;
+margin-top:4px;
 }
 
 .qty button{
@@ -82,14 +80,10 @@ font-size:12px;
 cursor:pointer;
 }
 
-.qty button.minus{
-background:#e53935;
-}
+.qty button.minus{background:#e53935}
 
 .cart-summary{
-border-top:1px dashed #ccc;
 margin-top:6px;
-padding-top:6px;
 font-weight:bold;
 }
 
@@ -166,9 +160,9 @@ font-size:13px;
 <div class="header">ร้านริมทุ่ง</div>
 
 <div class="cart-box">
-  <div class="cart-title">🧺 ตะกร้า</div>
-  <div id="cartList"></div>
-  <div id="cartSummary" class="cart-summary"></div>
+<div class="cart-title">🧺 ตะกร้า</div>
+<div id="cartList"></div>
+<div id="cartSummary" class="cart-summary"></div>
 </div>
 
 <div id="list"></div>
@@ -212,7 +206,7 @@ ${sweets.map(s=>`<span class="block sweet" onclick="pick(this,'sweet')">${s}</sp
 <span class="block type ${oreo?'disabled':''}" onclick="pick(this,'type')">แยกน้ำ</span>
 <span class="block type ${oreo?'disabled':''}" onclick="pick(this,'type')">ปั่น</span>
 
-<button class="add" onclick="addItem('${m[0]}',${m[1]})">เพิ่ม</button>
+<button class="add" onclick="addItem(this,'${m[0]}',${m[1]})">เพิ่ม</button>
 </div>
 </div>`;
 });
@@ -230,20 +224,33 @@ menu.nextElementSibling.style.display==="block"?"none":"block";
 
 function pick(el,type){
 if(el.classList.contains("disabled")) return;
+if(el.classList.contains("active")){
+el.classList.remove("active"); // 👈 ติ๊กออกได้
+return;
+}
 const p=el.closest(".panel");
 p.querySelectorAll("."+type).forEach(b=>b.classList.remove("active"));
 el.classList.add("active");
 }
 
-function addItem(name,price){
-cart[name] ??= {qty:0,price};
-cart[name].qty++;
+function addItem(btn,name,price){
+const p=btn.parentElement;
+const sweet=p.querySelector(".sweet.active");
+const type=p.querySelector(".type.active");
+if(!sweet||!type) return;
+
+const key=name+"|"+sweet.textContent+"|"+type.textContent;
+cart[key] ??= {name,price,sweet:sweet.textContent,type:type.textContent,qty:0};
+cart[key].qty++;
+
 renderCart();
+p.style.display="none";
+p.querySelectorAll(".block").forEach(b=>b.classList.remove("active"));
 }
 
-function change(name,val){
-cart[name].qty+=val;
-if(cart[name].qty<=0) delete cart[name];
+function change(key,val){
+cart[key].qty+=val;
+if(cart[key].qty<=0) delete cart[key];
 renderCart();
 }
 
@@ -251,27 +258,26 @@ function renderCart(){
 const box=document.getElementById("cartList");
 const sum=document.getElementById("cartSummary");
 box.innerHTML="";
+let tq=0,tp=0;
 
-let totalQty=0,totalPrice=0;
-
-Object.keys(cart).forEach(n=>{
-const item=cart[n];
-totalQty+=item.qty;
-totalPrice+=item.qty*item.price;
+Object.keys(cart).forEach(k=>{
+const i=cart[k];
+tq+=i.qty;
+tp+=i.qty*i.price;
 
 box.innerHTML+=`
 <div class="cart-item">
-<span>${n} (${item.qty}x${item.price})</span>
+<div class="cart-name">${i.name}</div>
+<div class="cart-detail">หวาน ${i.sweet} • ${i.type}</div>
+<div class="cart-detail">${i.qty} x ${i.price} บาท</div>
 <div class="qty">
-<button class="minus" onclick="change('${n}',-1)">➖</button>
-<button onclick="change('${n}',1)">➕</button>
+<button class="minus" onclick="change('${k}',-1)">➖</button>
+<button onclick="change('${k}',1)">➕</button>
 </div>
 </div>`;
 });
 
-sum.innerHTML= totalQty
-? `รวม ${totalQty} แก้ว<br>รวม ${totalPrice} บาท`
-: "";
+sum.innerHTML=tq?`รวม ${tq} แก้ว<br>รวม ${tp} บาท`:"";
 }
 </script>
 
