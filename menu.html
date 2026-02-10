@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ร้านริมทุ่ง</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:sans-serif;
+background:#f2f2f2;
+padding-top:70px;
+}
+
+/* ===== HEADER ===== */
+.header{
+position:fixed;
+top:0;left:0;right:0;
+background:#4CAF50;
+color:white;
+padding:10px 12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:1000;
+}
+
+.header h1{
+margin:0;
+font-size:20px;
+}
+
+/* ===== CART ===== */
+.cart{
+background:white;
+color:black;
+border-radius:12px;
+padding:8px;
+width:260px;
+font-size:14px;
+box-shadow:0 2px 6px rgba(0,0,0,.3);
+}
+
+.cart-title{
+font-weight:bold;
+margin-bottom:6px;
+}
+
+.cart-item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin:4px 0;
+}
+
+.cart-item button{
+border:none;
+background:#4CAF50;
+color:white;
+border-radius:5px;
+padding:2px 6px;
+margin-left:2px;
+cursor:pointer;
+}
+
+.total{
+border-top:1px solid #ccc;
+margin-top:6px;
+padding-top:6px;
+font-weight:bold;
+}
+
+/* ===== MENU ===== */
+.menu{
+padding:10px;
+}
+
+.item{
+background:white;
+margin-bottom:8px;
+padding:10px;
+border-radius:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.item button{
+border:none;
+background:#2196F3;
+color:white;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>ร้านริมทุ่ง</h1>
+
+<div class="cart">
+<div class="cart-title">🧺 ตะกร้า</div>
+<div id="cartList"></div>
+<div class="total">
+รวม <span id="totalQty">0</span> แก้ว | ฿<span id="totalPrice">0</span>
+</div>
+</div>
+</div>
+
+<div class="menu" id="menu"></div>
+
+<script>
+const menus=[
+["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],
+["โอเลี้ยง",25],["โอเลี้ยงยกล้อ",25],
+["กาแฟเนส",25],["กาแฟดำ",25],
+["เผือก",25],["แคนตาลูป",25],
+["โอวัลติน",25],["นมสด",25],
+["โอริโอ้นมสดปั่น",30],
+["โกโก้",25],["แดงโซดา",25],
+["แดงโซดามะนาว",25],
+["เขียวโซดา",25],["เขียวโซดามะนาว",25],
+["บลูฮาวาย",25],["บลูฮาวายโซดา",25],
+["แอปเปิ้ลเขียว",25],["แอปเปิ้ลเขียวโซดา",25],
+["มะพร้าว",25],["มะพร้าวนมสด",25],
+["สตอเบอรี่",25],["สตอเบอรี่โซดา",25]
+];
+
+let cart={};
+
+const menuBox=document.getElementById("menu");
+menus.forEach(m=>{
+menuBox.innerHTML+=`
+<div class="item">
+<div>${m[0]} — ${m[1]} บาท</div>
+<button onclick="addItem('${m[0]}',${m[1]})">เพิ่ม</button>
+</div>`;
+});
+
+function addItem(name,price){
+if(!cart[name]){
+cart[name]={qty:1,price:price};
+}else{
+cart[name].qty++;
+}
+renderCart();
+}
+
+function changeQty(name,delta){
+cart[name].qty+=delta;
+if(cart[name].qty<=0){
+delete cart[name];
+}
+renderCart();
+}
+
+function renderCart(){
+const list=document.getElementById("cartList");
+list.innerHTML="";
+let qty=0,sum=0;
+
+for(let n in cart){
+let i=cart[n];
+qty+=i.qty;
+sum+=i.qty*i.price;
+
+list.innerHTML+=`
+<div class="cart-item">
+${n} (${i.qty})
+<div>
+<button onclick="changeQty('${n}',-1)">−</button>
+<button onclick="changeQty('${n}',1)">+</button>
+</div>
+</div>`;
+}
+
+document.getElementById("totalQty").innerText=qty;
+document.getElementById("totalPrice").innerText=sum;
+}
+</script>
+
+</body>
+</html>
