@@ -33,7 +33,7 @@ position:fixed;
 top:8px;
 right:8px;
 background:white;
-width:240px;
+width:260px;
 max-height:75vh;
 overflow:auto;
 border-radius:14px;
@@ -54,9 +54,7 @@ border-bottom:1px dashed #ccc;
 padding:6px 0;
 }
 
-.cart-name{
-font-weight:bold;
-}
+.cart-name{font-weight:bold}
 
 .cart-detail{
 font-size:11px;
@@ -85,6 +83,19 @@ cursor:pointer;
 .cart-summary{
 margin-top:6px;
 font-weight:bold;
+text-align:center;
+}
+
+.order-btn{
+width:100%;
+margin-top:6px;
+padding:8px;
+border:none;
+border-radius:10px;
+background:#ff9800;
+color:white;
+font-size:13px;
+cursor:pointer;
 }
 
 /* MENU */
@@ -163,6 +174,7 @@ font-size:13px;
 <div class="cart-title">🧺 ตะกร้า</div>
 <div id="cartList"></div>
 <div id="cartSummary" class="cart-summary"></div>
+<button class="order-btn" onclick="checkout()">🛒 สั่งซื้อ</button>
 </div>
 
 <div id="list"></div>
@@ -204,7 +216,7 @@ ${sweets.map(s=>`<span class="block sweet" onclick="pick(this,'sweet')">${s}</sp
 <br><br><b>ชนิด</b><br>
 <span class="block type" onclick="pick(this,'type')">เย็น</span>
 <span class="block type ${oreo?'disabled':''}" onclick="pick(this,'type')">แยกน้ำ</span>
-<span class="block type ${oreo?'disabled':''}" onclick="pick(this,'type')">ปั่น</span>
+<span class="block type ${oreo?'disabled':''}" data-extra="5" onclick="pick(this,'type')">ปั่น +5</span>
 
 <button class="add" onclick="addItem(this,'${m[0]}',${m[1]})">เพิ่ม</button>
 </div>
@@ -225,7 +237,7 @@ menu.nextElementSibling.style.display==="block"?"none":"block";
 function pick(el,type){
 if(el.classList.contains("disabled")) return;
 if(el.classList.contains("active")){
-el.classList.remove("active"); // 👈 ติ๊กออกได้
+el.classList.remove("active");
 return;
 }
 const p=el.closest(".panel");
@@ -239,8 +251,11 @@ const sweet=p.querySelector(".sweet.active");
 const type=p.querySelector(".type.active");
 if(!sweet||!type) return;
 
+const extra=type.dataset.extra?Number(type.dataset.extra):0;
+const totalPrice=price+extra;
+
 const key=name+"|"+sweet.textContent+"|"+type.textContent;
-cart[key] ??= {name,price,sweet:sweet.textContent,type:type.textContent,qty:0};
+cart[key] ??= {name,sweet:sweet.textContent,type:type.textContent,price:totalPrice,qty:0};
 cart[key].qty++;
 
 renderCart();
@@ -260,8 +275,7 @@ const sum=document.getElementById("cartSummary");
 box.innerHTML="";
 let tq=0,tp=0;
 
-Object.keys(cart).forEach(k=>{
-const i=cart[k];
+Object.values(cart).forEach(i=>{
 tq+=i.qty;
 tp+=i.qty*i.price;
 
@@ -271,13 +285,28 @@ box.innerHTML+=`
 <div class="cart-detail">หวาน ${i.sweet} • ${i.type}</div>
 <div class="cart-detail">${i.qty} x ${i.price} บาท</div>
 <div class="qty">
-<button class="minus" onclick="change('${k}',-1)">➖</button>
-<button onclick="change('${k}',1)">➕</button>
+<button class="minus" onclick="change('${i.name}|${i.sweet}|${i.type}',-1)">➖</button>
+<button onclick="change('${i.name}|${i.sweet}|${i.type}',1)">➕</button>
 </div>
 </div>`;
 });
 
 sum.innerHTML=tq?`รวม ${tq} แก้ว<br>รวม ${tp} บาท`:"";
+}
+
+function checkout(){
+if(Object.keys(cart).length===0){
+alert("ยังไม่มีรายการในตะกร้า");
+return;
+}
+let msg="สรุปคำสั่งซื้อ\n\n";
+let total=0;
+Object.values(cart).forEach(i=>{
+msg+=`${i.name}\n- หวาน ${i.sweet}\n- ${i.type}\n${i.qty} x ${i.price} บาท\n\n`;
+total+=i.qty*i.price;
+});
+msg+=`รวมทั้งหมด ${total} บาท`;
+alert(msg);
 }
 </script>
 
