@@ -155,128 +155,164 @@ margin:0 2px;
 <div id="menuList"></div>
 
 <script>
+
 const menus=[
-["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],
-["โอเลี้ยง",25],["โอเลี้ยงยกล้อ",25],
-["กาแฟเนส",25],["กาแฟดำ",25],
-["เผือก",25],["แคนตาลูป",25],
-["โอวัลติน",25],["นมสด",25],
-["โอริโอ้นมสดปั่น",30],
-["โกโก้",25],["แดงโซดา",25],["แดงโซดามะนาว",25],
-["เขียวโซดา",25],["เขียวโซดามะนาว",25],
-["บลูฮาวาย",25],["บลูฮาวายโซดา",25],
-["แอปเปิ้ลเขียว",25],["แอปเปิ้ลเขียวโซดา",25],
-["มะพร้าว",25],["มะพร้าวนมสด",25],
-["สตอเบอรี่",25],["สตอเบอรี่โซดา",25]
+{name:"ชาเขียว",price:25},
+{name:"ชาไทย",price:25},
+{name:"ชาดำเย็น",price:25},
+{name:"โอเลี้ยง",price:25},
+{name:"โกโก้",price:30},
+{name:"นมสด",price:30},
+{name:"โอรีโอ้",price:35}
 ];
 
-const sweets=["0%","25%","50%","75%","100%","125%"];
-let cart={};
+let currentMenu=null;
+let selectedSweet=null;
+let selectedType=null;
+let cart=[];
 
-const list=document.getElementById("list");
+/* ===== CREATE MENU ===== */
+const menuList=document.getElementById("menuList");
 
-menus.forEach(m=>{
-const oreo=m[0]==="โอริโอ้นมสดปั่น";
+menus.forEach((m,i)=>{
+menuList.innerHTML+=`
+<div class="menu" onclick="openMenu(${i})">
+<b>${m.name}</b><br>${m.price} บาท
 
-list.innerHTML+=`
-<div class="card">
-<div class="menu" onclick="toggle(this)">
-<img src="https://picsum.photos/200?${Math.random()}">
-<div><b>${m[0]}</b><br>${m[1]} บาท</div>
+<div class="options" id="opt${i}">
+<div>ความหวาน:</div>
+${[0,25,50,75,100,125].map(v=>
+`<button class="option-btn" onclick="selectSweet(event,${i},${v})">${v}</button>`
+).join("")}
+
+<div>ชนิด:</div>
+<button class="option-btn" onclick="selectType(event,${i},'เย็น')">เย็น</button>
+<button class="option-btn" onclick="selectType(event,${i},'ปั่น')">ปั่น</button>
+
+<br><br>
+<button onclick="addCart(${i})">เพิ่มลงตะกร้า</button>
 </div>
-
-<div class="panel">
-<b>ความหวาน</b><br>
-${sweets.map(s=>`<span class="block sweet" onclick="pick(this,'sweet')">${s}</span>`).join("")}
-
-<br><br><b>ชนิด</b><br>
-<span class="block type" onclick="pick(this,'type')">เย็น</span>
-<span class="block type ${oreo?'disabled':''}" onclick="pick(this,'type')">แยกน้ำ</span>
-<span class="block type ${oreo?'disabled':''}" data-extra="5" onclick="pick(this,'type')">ปั่น +5</span>
-
-<button class="add" onclick="addItem(this,'${m[0]}',${m[1]})">เพิ่ม</button>
 </div>
-</div>`;
+`;
 });
 
-function toggle(menu){
-document.querySelectorAll(".panel").forEach(p=>{
-if(p!==menu.nextElementSibling){
-p.style.display="none";
-p.querySelectorAll(".block").forEach(b=>b.classList.remove("active"));
-}
-});
-menu.nextElementSibling.style.display=
-menu.nextElementSibling.style.display==="block"?"none":"block";
+/* ===== MENU OPEN ===== */
+function openMenu(i){
+document.querySelectorAll(".options").forEach(o=>o.style.display="none");
+resetSelect();
+document.getElementById("opt"+i).style.display="block";
+currentMenu=i;
 }
 
-function pick(el,type){
-if(el.classList.contains("disabled")) return;
-if(el.classList.contains("active")){
-el.classList.remove("active");
+/* ===== SELECT ===== */
+function selectSweet(e,i,val){
+e.stopPropagation();
+if(selectedSweet===val){
+selectedSweet=null;
+e.target.classList.remove("selected");
 return;
 }
-const p=el.closest(".panel");
-p.querySelectorAll("."+type).forEach(b=>b.classList.remove("active"));
-el.classList.add("active");
+document.querySelectorAll("#opt"+i+" .option-btn")
+.forEach(b=>{ if(!isNaN(b.innerText)) b.classList.remove("selected");});
+e.target.classList.add("selected");
+selectedSweet=val;
 }
 
-function addItem(btn,name,price){
-const p=btn.parentElement;
-const sweet=p.querySelector(".sweet.active");
-const type=p.querySelector(".type.active");
-if(!sweet||!type) return;
+function selectType(e,i,val){
+e.stopPropagation();
+if(selectedType===val){
+selectedType=null;
+e.target.classList.remove("selected");
+return;
+}
+document.querySelectorAll("#opt"+i+" .option-btn")
+.forEach(b=>{
+if(b.innerText==="เย็น"||b.innerText==="ปั่น")
+b.classList.remove("selected");
+});
+e.target.classList.add("selected");
+selectedType=val;
+}
 
-const extra=type.dataset.extra?Number(type.dataset.extra):0;
-const totalPrice=price+extra;
+/* ===== ADD CART ===== */
+function addCart(i){
+if(selectedSweet==null||selectedType==null){
+alert("เลือกความหวานและชนิดก่อน");
+return;
+}
 
-const key=name+"|"+sweet.textContent+"|"+type.textContent;
-cart[key] ??= {name,sweet:sweet.textContent,type:type.textContent,price:totalPrice,qty:0};
-cart[key].qty++;
+let itemName=
+`${menus[i].name} (${selectedSweet}% ${selectedType})`;
+
+let found=cart.find(c=>c.name===itemName);
+
+if(found) found.qty++;
+else cart.push({name:itemName,price:menus[i].price,qty:1});
 
 renderCart();
-p.style.display="none";
-p.querySelectorAll(".block").forEach(b=>b.classList.remove("active"));
+resetSelect();
+document.getElementById("opt"+i).style.display="none";
 }
 
-function change(key,val){
-cart[key].qty+=val;
-if(cart[key].qty<=0) delete cart[key];
-renderCart();
-}
-
+/* ===== CART ===== */
 function renderCart(){
-const box=document.getElementById("cartList");
-const sum=document.getElementById("cartSummary");
-box.innerHTML="";
-let tq=0,tp=0;
+let html="";
+let total=0;
+let count=0;
 
-Object.entries(cart).forEach(([k,i])=>{
-tq+=i.qty;
-tp+=i.qty*i.price;
+cart.forEach((c,idx)=>{
+total+=c.price*c.qty;
+count+=c.qty;
 
-box.innerHTML+=`
+html+=`
 <div class="cart-item">
-<div class="cart-name">${i.name}</div>
-<div class="cart-detail">หวาน ${i.sweet} • ${i.type}</div>
-<div class="cart-detail">${i.qty} x ${i.price} บาท</div>
+${c.name}
 <div class="qty">
-<button class="minus" onclick="change('${k}',-1)">➖</button>
-<button onclick="change('${k}',1)">➕</button>
+<button onclick="minus(${idx})">-</button>
+${c.qty}
+<button onclick="plus(${idx})">+</button>
 </div>
 </div>`;
 });
 
-sum.innerHTML=tq?`รวม ${tq} แก้ว<br>รวม ${tp} บาท`:"";
+document.getElementById("cartList").innerHTML=html;
+document.getElementById("total").innerHTML=
+`รวม ${count} แก้ว | ${total} บาท`;
 }
 
+function plus(i){
+cart[i].qty++;
+renderCart();
+}
+
+function minus(i){
+cart[i].qty--;
+if(cart[i].qty<=0) cart.splice(i,1);
+renderCart();
+}
+
+/* ===== RESET ===== */
+function resetSelect(){
+selectedSweet=null;
+selectedType=null;
+document.querySelectorAll(".option-btn")
+.forEach(b=>b.classList.remove("selected"));
+}
+
+/* ===== HOME ===== */
+function goHome(){
+window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ===== QR ===== */
 function checkout(){
-if(Object.keys(cart).length===0){
-alert("ยังไม่มีรายการในตะกร้า");
+if(cart.length===0){
+alert("ยังไม่มีรายการ");
 return;
 }
-alert("สั่งซื้อเรียบร้อย ✅");
+alert("แสดง QR Code (ต่อยอดได้)");
 }
+
 </script>
 
 </body>
