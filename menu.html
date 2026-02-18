@@ -12,7 +12,6 @@ margin:0;
 font-family:sans-serif;
 background:#f2f2f2;
 padding-top:55px;
-padding-bottom:20px;
 }
 
 /* HEADER */
@@ -22,8 +21,8 @@ top:0;left:0;right:0;
 background:linear-gradient(135deg,#43a047,#8bc34a);
 color:white;
 text-align:center;
-padding:6px;
-font-size:14px;
+padding:8px;
+font-size:16px;
 z-index:1000;
 }
 
@@ -55,11 +54,7 @@ padding:6px 0;
 }
 
 .cart-name{font-weight:bold}
-
-.cart-detail{
-font-size:11px;
-color:#555;
-}
+.cart-detail{font-size:11px;color:#555;}
 
 .qty{
 display:flex;
@@ -74,7 +69,6 @@ background:#4CAF50;
 color:white;
 border-radius:6px;
 padding:2px 6px;
-font-size:12px;
 cursor:pointer;
 }
 
@@ -94,7 +88,6 @@ border:none;
 border-radius:10px;
 background:#ff9800;
 color:white;
-font-size:13px;
 cursor:pointer;
 }
 
@@ -123,7 +116,6 @@ border-radius:10px;
 .menu div{
 margin-left:10px;
 flex:1;
-font-size:14px;
 }
 
 .panel{
@@ -161,14 +153,36 @@ border-radius:12px;
 background:#2196F3;
 color:white;
 margin-top:6px;
-font-size:13px;
+}
+
+/* QR POPUP */
+.qr-popup{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.6);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:2000;
+}
+
+.qr-box{
+background:white;
+padding:20px;
+border-radius:16px;
+text-align:center;
+}
+
+.qr-box img{
+width:220px;
+margin:10px 0;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">ร้านริมทุ่ง</div>
+<div class="header">☕ ร้านริมทุ่ง</div>
 
 <div class="cart-box">
 <div class="cart-title">🧺 ตะกร้า</div>
@@ -179,7 +193,18 @@ font-size:13px;
 
 <div id="list"></div>
 
+<!-- QR -->
+<div class="qr-popup" id="qrPopup">
+<div class="qr-box">
+<h3>สแกนเพื่อชำระเงิน</h3>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=PromptPay">
+<br>
+<button onclick="closeQR()">ปิด</button>
+</div>
+</div>
+
 <script>
+
 const menus=[
 ["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],
 ["โอเลี้ยง",25],["โอเลี้ยงยกล้อ",25],
@@ -187,7 +212,8 @@ const menus=[
 ["เผือก",25],["แคนตาลูป",25],
 ["โอวัลติน",25],["นมสด",25],
 ["โอริโอ้นมสดปั่น",30],
-["โกโก้",25],["แดงโซดา",25],["แดงโซดามะนาว",25],
+["โกโก้",25],
+["แดงโซดา",25],["แดงโซดามะนาว",25],
 ["เขียวโซดา",25],["เขียวโซดามะนาว",25],
 ["บลูฮาวาย",25],["บลูฮาวายโซดา",25],
 ["แอปเปิ้ลเขียว",25],["แอปเปิ้ลเขียวโซดา",25],
@@ -213,6 +239,7 @@ list.innerHTML+=`
 <div class="panel">
 <b>ความหวาน</b><br>
 ${sweets.map(s=>`<span class="block sweet" onclick="pick(this,'sweet')">${s}</span>`).join("")}
+
 <br><br><b>ชนิด</b><br>
 <span class="block type" onclick="pick(this,'type')">เย็น</span>
 <span class="block type ${oreo?'disabled':''}" onclick="pick(this,'type')">แยกน้ำ</span>
@@ -275,7 +302,7 @@ const sum=document.getElementById("cartSummary");
 box.innerHTML="";
 let tq=0,tp=0;
 
-Object.values(cart).forEach(i=>{
+Object.entries(cart).forEach(([k,i])=>{
 tq+=i.qty;
 tp+=i.qty*i.price;
 
@@ -285,8 +312,8 @@ box.innerHTML+=`
 <div class="cart-detail">หวาน ${i.sweet} • ${i.type}</div>
 <div class="cart-detail">${i.qty} x ${i.price} บาท</div>
 <div class="qty">
-<button class="minus" onclick="change('${i.name}|${i.sweet}|${i.type}',-1)">➖</button>
-<button onclick="change('${i.name}|${i.sweet}|${i.type}',1)">➕</button>
+<button class="minus" onclick="change('${k}',-1)">➖</button>
+<button onclick="change('${k}',1)">➕</button>
 </div>
 </div>`;
 });
@@ -296,19 +323,16 @@ sum.innerHTML=tq?`รวม ${tq} แก้ว<br>รวม ${tp} บาท`:"";
 
 function checkout(){
 if(Object.keys(cart).length===0){
-alert("ยังไม่มีรายการในตะกร้า");
+alert("ยังไม่มีรายการ");
 return;
 }
-let msg="สรุปคำสั่งซื้อ\n\n";
-let total=0;
-Object.values(cart).forEach(i=>{
-msg+=`${i.name}\n- หวาน ${i.sweet}\n- ${i.type}\n${i.qty} x ${i.price} บาท\n\n`;
-total+=i.qty*i.price;
-});
-msg+=`รวมทั้งหมด ${total} บาท`;
-alert(msg);
+document.getElementById("qrPopup").style.display="flex";
 }
-</script>
 
+function closeQR(){
+document.getElementById("qrPopup").style.display="none";
+}
+
+</script>
 </body>
 </html>
