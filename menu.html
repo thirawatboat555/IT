@@ -22,8 +22,52 @@ background:linear-gradient(135deg,#43a047,#8bc34a);
 color:white;
 text-align:center;
 padding:8px;
-font-size:16px;
 z-index:1000;
+}
+
+/* ===== หน้าแรก ===== */
+.shop-banner{
+background:white;
+margin:12px;
+border-radius:16px;
+padding:20px 10px;
+text-align:center;
+box-shadow:0 3px 8px rgba(0,0,0,.15);
+}
+
+.shop-title{
+font-size:26px;
+font-weight:bold;
+color:#2e7d32;
+}
+
+/* แถวแม่ค้า */
+.seller-bar{
+display:flex;
+align-items:center;
+gap:8px;
+margin-top:15px;
+justify-content:flex-start;
+flex-wrap:wrap;
+}
+
+.seller-bar label{
+font-weight:bold;
+}
+
+.seller-bar input{
+padding:6px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+.seller-bar button{
+background:#4CAF50;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:8px;
+cursor:pointer;
 }
 
 /* CART */
@@ -154,29 +198,6 @@ background:#2196F3;
 color:white;
 margin-top:6px;
 }
-
-/* QR POPUP */
-.qr-popup{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.6);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:2000;
-}
-
-.qr-box{
-background:white;
-padding:20px;
-border-radius:16px;
-text-align:center;
-}
-
-.qr-box img{
-width:220px;
-margin:10px 0;
-}
 </style>
 </head>
 
@@ -184,6 +205,20 @@ margin:10px 0;
 
 <div class="header">☕ ร้านริมทุ่ง</div>
 
+<!-- ===== ป้ายร้าน ===== -->
+<div class="shop-banner">
+
+<div class="shop-title">ร้านริมทุ่ง</div>
+
+<div class="seller-bar">
+<label>สำหรับแม่ค้า :</label>
+<input type="password" placeholder="ใส่รหัส">
+<button onclick="alert('เข้าสู่โหมดแม่ค้า')">เข้า</button>
+</div>
+
+</div>
+
+<!-- CART -->
 <div class="cart-box">
 <div class="cart-title">🧺 ตะกร้า</div>
 <div id="cartList"></div>
@@ -193,18 +228,7 @@ margin:10px 0;
 
 <div id="list"></div>
 
-<!-- QR -->
-<div class="qr-popup" id="qrPopup">
-<div class="qr-box">
-<h3>สแกนเพื่อชำระเงิน</h3>
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=PromptPay">
-<br>
-<button onclick="closeQR()">ปิด</button>
-</div>
-</div>
-
 <script>
-
 const menus=[
 ["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],
 ["โอเลี้ยง",25],["โอเลี้ยงยกล้อ",25],
@@ -212,8 +236,7 @@ const menus=[
 ["เผือก",25],["แคนตาลูป",25],
 ["โอวัลติน",25],["นมสด",25],
 ["โอริโอ้นมสดปั่น",30],
-["โกโก้",25],
-["แดงโซดา",25],["แดงโซดามะนาว",25],
+["โกโก้",25],["แดงโซดา",25],["แดงโซดามะนาว",25],
 ["เขียวโซดา",25],["เขียวโซดามะนาว",25],
 ["บลูฮาวาย",25],["บลูฮาวายโซดา",25],
 ["แอปเปิ้ลเขียว",25],["แอปเปิ้ลเขียวโซดา",25],
@@ -323,16 +346,12 @@ sum.innerHTML=tq?`รวม ${tq} แก้ว<br>รวม ${tp} บาท`:"";
 
 function checkout(){
 if(Object.keys(cart).length===0){
-alert("ยังไม่มีรายการ");
+alert("ยังไม่มีรายการในตะกร้า");
 return;
 }
-document.getElementById("qrPopup").style.display="flex";
+alert("สั่งซื้อเรียบร้อย ✅");
 }
-
-function closeQR(){
-document.getElementById("qrPopup").style.display="none";
-}
-
 </script>
+
 </body>
 </html>
