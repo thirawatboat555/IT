@@ -118,6 +118,7 @@ cursor:pointer;
 width:60px;
 height:60px;
 border-radius:10px;
+object-fit:cover;
 }
 
 .menu div{
@@ -180,19 +181,35 @@ font-size:13px;
 <div id="list"></div>
 
 <script>
+
+
+/*แก้ "ชื่อ",ราคา,"images/(ชื่อรูปต้องตรง)"*/
 const menus=[
-["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],
-["โอเลี้ยง",25],["โอเลี้ยงยกล้อ",25],
-["กาแฟเนส",25],["กาแฟดำ",25],
-["เผือก",25],["แคนตาลูป",25],
-["โอวัลติน",25],["นมสด",25],
-["โอริโอ้นมสดปั่น",30],
-["โกโก้",25],["แดงโซดา",25],["แดงโซดามะนาว",25],
-["เขียวโซดา",25],["เขียวโซดามะนาว",25],
-["บลูฮาวาย",25],["บลูฮาวายโซดา",25],
-["แอปเปิ้ลเขียว",25],["แอปเปิ้ลเขียวโซดา",25],
-["มะพร้าว",25],["มะพร้าวนมสด",25],
-["สตอเบอรี่",25],["สตอเบอรี่โซดา",25]
+["ชาเขียว",25,"images/chageen.jpg"],
+["ชาไทย",25,"images/chathai.jpg"],
+["โกโก้",25,"images/cocoa.jpg"],
+["นมสด",25,"images/nom.jpg"],
+["โอริโอ้นมสดปั่น",30,"images/oreo.jpg"],
+["ชาดำเย็น",25,"images/chadang.jpg"],
+["โอเลี้ยง",25,"images/ole.jpg"],
+["กาแฟเนส",25,"images/Ness coffee.jpg"],
+["กาแฟดำ",25,"images/dark coffee.jpg"],
+["เผือก",25,"images/Cold taro.jpg"],
+["แคนตาลูป",25,"images/Cantaloupe.jpg"],
+["โอวัลติน",25,"images/Ovaltine.jpg"],
+["แดงโซดา",25,"images/Red Soda.jpg"],
+["แดงโซดามะนาว",25,"images/Red Lemon Soda.jpg"],
+["เขียวโซดา",25,"images/Green Soda.jpg"],
+["เขียวโซดามะนาว",25,"images/Green Lime Soda.jpg"],
+["บลูฮาวาย",25,"images/Blue Hawaii.jpg"],
+["บลูฮาวายโซดา",25,"images/Blue Hawaii Soda.jpg"],
+["แอปเบิ้ลเขียว",25,"images/green apple.jpg"],
+["แอปเบิ้ลเขียวโซดา",25,"images/Green Apple Soda.jpg"],
+["มะพร้าว",25,"images/coconut.jpg"],
+["มะพร้าวนมสด",25,"images/fresh coconut milk.jpg"],
+["สตอเบอรี่",25,"images/strawberry.jpg"],
+["สตอเบอรี่โซดา",25,"images/Strawberry soda.jpg"]
+/*เวลาจบตัวสุดท้ายไม่ต้องใส่ , ปิดเหมือนตัวนี้ ["นมสด",25,"images/nom.jpg"]*/
 ];
 
 const sweets=["0%","25%","50%","75%","100%","125%"];
@@ -206,7 +223,7 @@ const oreo=m[0]==="โอริโอ้นมสดปั่น";
 list.innerHTML+=`
 <div class="card">
 <div class="menu" onclick="toggle(this)">
-<img src="https://picsum.photos/200?${Math.random()}">
+<img src="${m[2]}" alt="${m[0]}">
 <div><b>${m[0]}</b><br>${m[1]} บาท</div>
 </div>
 
