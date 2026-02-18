@@ -201,7 +201,36 @@ font-size:13px;
 
 <body>
 
-<div class="header">ร้านริมทุ่ง</div>
+<div class="header">
+
+  <!-- ฝั่งซ้าย -->
+  <div class="header-left">
+    <button onclick="goHome()">🏠 หน้าแรก</button>
+  </div>
+
+  <!-- ชื่อร้านตรงกลาง -->
+  <div class="header-center">
+    ร้านริมทุ่ง
+  </div>
+
+  <!-- ช้อยส์ของแม่ค้า -->
+  <div class="header-right">
+
+    <div style="font-size:12px; margin-bottom:4px;">
+      🔒 สำหรับร้านค้า
+    </div>
+
+    <input type="password"
+           id="sellerPass"
+           class="seller-input"
+           placeholder="ใส่รหัส">
+
+    <button onclick="sellerLogin()">ยืนยัน</button>
+
+  </div>
+
+</div>
+
 
 <div class="cart-box">
 <div class="cart-title">🧺 ตะกร้า</div>
@@ -357,6 +386,25 @@ total+=i.qty*i.price;
 msg+=`รวมทั้งหมด ${total} บาท`;
 alert(msg);
 }
+
+function sellerLogin() {
+  const pass = document.getElementById("sellerPass").value;
+
+  if(pass === "1234"){
+    alert("เข้าสู่โหมดแม่ค้าแล้ว");
+  }else{
+    alert("รหัสไม่ถูกต้อง");
+  }
+}
+
+function goHome(){
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+
 </script>
 
 </body>
