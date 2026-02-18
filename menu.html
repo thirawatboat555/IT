@@ -2,154 +2,181 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ร้านริมทุ่ง</title>
 
 <style>
+*{box-sizing:border-box}
 body{
 margin:0;
 font-family:sans-serif;
-background:#f4f4f4;
-padding-top:70px;
+background:#f2f2f2;
+padding-top:55px;
+padding-bottom:20px;
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 .header{
 position:fixed;
 top:0;left:0;right:0;
 background:linear-gradient(135deg,#43a047,#8bc34a);
 color:white;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:8px 12px;
+text-align:center;
+padding:6px;
+font-size:14px;
 z-index:1000;
 }
 
-.header-title{
-font-size:20px;
+/* CART */
+.cart-box{
+position:fixed;
+top:8px;
+right:8px;
+background:white;
+width:260px;
+max-height:75vh;
+overflow:auto;
+border-radius:14px;
+box-shadow:0 4px 10px rgba(0,0,0,.25);
+padding:8px;
+font-size:12px;
+z-index:1200;
+}
+
+.cart-title{
 font-weight:bold;
 text-align:center;
-flex:1;
-}
-
-.header-right{
-display:flex;
-gap:6px;
-align-items:center;
-}
-
-.header-right input{
-padding:4px;
-border:none;
-border-radius:6px;
-}
-
-.header-right button{
-background:#2e7d32;
-color:white;
-border:none;
-padding:5px 10px;
-border-radius:6px;
-cursor:pointer;
-}
-
-.home-btn{
-background:white;
-color:#2e7d32;
-border:none;
-padding:5px 10px;
-border-radius:8px;
-cursor:pointer;
-font-weight:bold;
-}
-
-/* ===== MENU ===== */
-.menu{
-background:white;
-margin:10px;
-padding:12px;
-border-radius:12px;
-box-shadow:0 2px 6px rgba(0,0,0,0.15);
-cursor:pointer;
-}
-
-/* ===== OPTION ===== */
-.options{
-display:none;
-margin-top:10px;
-}
-
-.option-btn{
-padding:6px 10px;
-margin:4px;
-border-radius:8px;
-border:1px solid #aaa;
-cursor:pointer;
-}
-
-.selected{
-background:#4caf50;
-color:white;
-border:none;
-}
-
-/* ===== CART ===== */
-.cart{
-position:fixed;
-top:70px;
-right:10px;
-width:260px;
-background:white;
-border-radius:12px;
-box-shadow:0 3px 10px rgba(0,0,0,0.2);
-padding:10px;
-z-index:999;
-}
-
-.cart h3{
-margin:0 0 5px 0;
+margin-bottom:6px;
 }
 
 .cart-item{
+border-bottom:1px dashed #ccc;
+padding:6px 0;
+}
+
+.cart-name{font-weight:bold}
+
+.cart-detail{
+font-size:11px;
+color:#555;
+}
+
+.qty{
 display:flex;
-justify-content:space-between;
-align-items:center;
-margin:4px 0;
-font-size:14px;
+justify-content:flex-end;
+gap:4px;
+margin-top:4px;
 }
 
 .qty button{
-margin:0 2px;
+border:none;
+background:#4CAF50;
+color:white;
+border-radius:6px;
+padding:2px 6px;
+font-size:12px;
+cursor:pointer;
+}
+
+.qty button.minus{background:#e53935}
+
+.cart-summary{
+margin-top:6px;
+font-weight:bold;
+text-align:center;
+}
+
+.order-btn{
+width:100%;
+margin-top:6px;
+padding:8px;
+border:none;
+border-radius:10px;
+background:#ff9800;
+color:white;
+font-size:13px;
+cursor:pointer;
+}
+
+/* MENU */
+.card{
+background:white;
+margin:10px;
+border-radius:14px;
+overflow:hidden;
+box-shadow:0 3px 6px rgba(0,0,0,.15);
+}
+
+.menu{
+display:flex;
+align-items:center;
+padding:10px;
+cursor:pointer;
+}
+
+.menu img{
+width:60px;
+height:60px;
+border-radius:10px;
+}
+
+.menu div{
+margin-left:10px;
+flex:1;
+font-size:14px;
+}
+
+.panel{
+display:none;
+padding:10px;
+border-top:1px solid #ddd;
+font-size:12px;
+}
+
+.block{
+border:1px solid #aaa;
+padding:5px 10px;
+border-radius:14px;
+margin:3px;
+display:inline-block;
+cursor:pointer;
+}
+
+.block.active{
+background:#4CAF50;
+color:white;
+border-color:#4CAF50;
+}
+
+.block.disabled{
+opacity:.4;
+pointer-events:none;
+}
+
+button.add{
+width:100%;
+padding:8px;
+border:none;
+border-radius:12px;
+background:#2196F3;
+color:white;
+margin-top:6px;
+font-size:13px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
+<div class="header">ร้านริมทุ่ง</div>
 
-<button class="home-btn" onclick="goHome()">🏠 หน้าแรก</button>
-
-<div class="header-title">☕ ร้านริมทุ่ง</div>
-
-<div class="header-right">
-<label>แม่ค้า:</label>
-<input type="password" placeholder="รหัส">
-<button onclick="alert('เข้าโหมดแม่ค้า')">เข้า</button>
-</div>
-
-</div>
-
-<!-- CART -->
-<div class="cart">
-<h3>🧺 ตะกร้า</h3>
+<div class="cart-box">
+<div class="cart-title">🧺 ตะกร้า</div>
 <div id="cartList"></div>
-<hr>
-<div id="total"></div>
-<button onclick="checkout()">สั่งซื้อ</button>
+<div id="cartSummary" class="cart-summary"></div>
+<button class="order-btn" onclick="checkout()">🛒 สั่งซื้อ</button>
 </div>
+
 <div id="list"></div>
 
 <script>
