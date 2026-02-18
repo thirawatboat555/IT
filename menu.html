@@ -21,11 +21,43 @@ position:fixed;
 top:0;left:0;right:0;
 background:linear-gradient(135deg,#43a047,#8bc34a);
 color:white;
-text-align:center;
-padding:6px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:6px 10px;
 font-size:14px;
 z-index:1000;
 }
+
+.header-left,
+.header-center,
+.header-right{
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+.header-center{
+font-weight:bold;
+flex:1;
+justify-content:center;
+}
+
+.header button{
+border:none;
+border-radius:6px;
+padding:4px 8px;
+cursor:pointer;
+}
+
+.seller-input{
+padding:3px 6px;
+border-radius:6px;
+border:none;
+font-size:12px;
+width:90px;
+}
+
 
 /* CART */
 .cart-box{
